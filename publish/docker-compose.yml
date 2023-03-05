@@ -1,0 +1,73 @@
+version: "3"
+services:
+       graphql-server:
+           container_name: graphql-server
+           restart: always
+           build: ../news-api
+           ports:
+            - "4000:4000"
+           depends_on:
+            - mongo
+           networks:
+            - my-network
+       news-subscriber:
+           container_name: news-subscriber
+           restart: always
+           build: ../subscribe
+           ports:
+             - "3000:3000"
+           depends_on:
+            - mongo
+           networks:
+            - my-network
+       mongo:
+           container_name: mongo
+           image: mongo
+           volumes:
+            - ./data:/data/db
+           ports:
+            - '27017:27017'
+           networks:
+            - my-network
+       news-parser:
+           container_name: news-producer
+           restart: always
+           build: .
+           ports:
+             - "7500:7500"
+           depends_on:
+            - selenium-hub
+            - news-subscriber
+           networks:
+            - my-network
+       redis:
+           container_name: redis_publisher
+           image: redis
+           ports:
+             - '6379:6379'
+           networks:
+             - my-network
+       selenium-hub:
+            image: selenium/hub:latest
+            container_name: selenium-hub
+            ports:
+              - "4444:4444"
+            networks:
+              - my-network
+            shm_size: '2gb'
+       chrome-node:
+            image: selenium/node-chrome:latest
+            container_name: chrome-node
+            environment:
+              - SE_EVENT_BUS_HOST=selenium-hub
+              - SE_EVENT_BUS_PUBLISH_PORT=4442
+              - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+            depends_on:
+              - selenium-hub
+            networks:
+              - my-network
+            shm_size: '2gb'
+          
+networks:
+  my-network:
+    driver: bridge
