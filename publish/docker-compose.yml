@@ -5,7 +5,7 @@ services:
            restart: always
            build: ../news-api
            ports:
-            - "4000:4000"
+            - "5000:5000"
            depends_on:
             - mongo
            networks:
