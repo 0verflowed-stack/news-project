@@ -1,0 +1,31 @@
+{
+  "dependencies": {
+    "apollo-server": "^3.12.0",
+    "bcryptjs": "^2.4.3",
+    "graphql": "^15.8.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^5.1.0",
+    "mongoose": "^7.0.1",
+    "nodemon": "^2.0.21",
+    "redis": "^4.6.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "name": "news-api",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/overflowed-stack/news-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/overflowed-stack/news-api/issues"
+  },
+  "homepage": "https://github.com/overflowed-stack/news-api#readme",
+  "description": ""
+}
