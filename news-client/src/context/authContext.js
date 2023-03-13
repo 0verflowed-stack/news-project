@@ -11,6 +11,7 @@ if (localStorage.getItem('token')) {
     if (decodedToken.exp * 1000 < Date.now()) {
         localStorage.removeItem('token');
     } else {
+        console.log('decodedToken', decodedToken)
         initialState.user = decodedToken;
     }
 }
@@ -24,6 +25,7 @@ const AuthContext = createContext({
 function authReducer(state, action) {
     switch(action.type) {
         case 'LOGIN':
+            console.log('action.payload', action.payload)
             return {
                 ...state,
                 user: action.payload

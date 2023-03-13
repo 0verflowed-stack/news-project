@@ -5,17 +5,17 @@ const httpLink = createHttpLink({
     uri: "http://localhost:5000/"
 });
 
-const authLInk = setContext((_, { headers }) => {
+const authLink = setContext((_, { headers }) => {
     return {
-        header: {
+        headers: {
             ...headers,
-            authorization: localStorage.getItem('token')
+            authorization: `Bearer ${localStorage.getItem('token')}`
         }
     };
 });
 
 const client = new ApolloClient({
-    link: authLInk.concat(httpLink),
+    link: authLink.concat(httpLink),
     cache: new InMemoryCache()
 });
 
