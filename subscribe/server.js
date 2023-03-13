@@ -11,20 +11,22 @@ const subscriber = redis.createClient({ url: redisUrl });
 await subscriber.connect();
 
 async function run(texts) {
-    const database = mongoClient.db('news');
+    const database = mongoClient.db('news-consumer');
     const news = database.collection('news');
     news.createIndex({title: 1}, {unique: true});
 
-    const data = texts.map(text => ({ title: text }));
+    const data = texts.map(text => ({
+        title: text,
+        likes: 0,
+        dislikes: 0,
+        comments: [],
+        caterory: "",
+        time: Date.now().toString()
+    }));
 
-    console.log("Before insert")
     await Promise.allSettled(data.map(item => news.insertOne(item)));
-    console.log("All news items", await news.find().toArray())
 }
 
 await subscriber.subscribe('article', (message) => {
-    console.log("message", message);
     run(JSON.parse(message)).catch(console.dir);
 });
-
-console.log('News subscriber started');
