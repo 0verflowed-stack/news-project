@@ -14,6 +14,23 @@ type User {
     token: String
 }
 
+type Comment {
+    body: String
+    username: String
+}
+
+type News {
+    id: String
+    title: String
+    likes: Int
+    liked: Boolean
+    dislikes: Int
+    disliked: Boolean
+    comments: [Comment]
+    category: String
+    time: String
+}
+
 input MessageInput {
     text: String
     username: String
@@ -31,14 +48,34 @@ input LoginInput {
     password: String
 }
 
+input LikeInput {
+    action: Boolean
+    post: ID
+}
+
+input DislikeInput {
+    action: Boolean
+    post: ID
+}
+
+input CommentInput {
+    action: Boolean
+    post: ID
+    comment: ID
+}
+
 type Query {
     message(id: ID!): Message
     user(id: ID!): User
+    news: [News]
 }
 
 type Mutation {
     createMessage(messageInput: MessageInput): Message!
     registerUser(registerInput: RegisterInput): User
     loginUser(loginInput: LoginInput): User
+    updateLike(likeInput: LikeInput): Boolean
+    updateDislike(dislikeInput: DislikeInput): Boolean
+    updateComment(commentInput: CommentInput): ID
 }
 `

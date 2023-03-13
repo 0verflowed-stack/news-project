@@ -1,5 +1,4 @@
 const { model, Schema } = require('mongoose');
-const User = require('./User');
 
 const userShema = new Schema({
     title: String,
@@ -10,4 +9,4 @@ const userShema = new Schema({
     time: String
 });
 
-module.exports = model('User', userShema);
+module.exports = model('News', userShema);
