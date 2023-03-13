@@ -18,7 +18,7 @@ const getNews = async () => {
     await driver.get(newsUrl);
 
     await driver.wait(until.elementLocated(By.css("a")), $locateElemTimeout);
-    const elements = await driver.findElements(By.css("a.im-tl_a"))
+    const elements = await driver.findElements(By.css("a.im-tl_a"));
   
     const news = await Promise.all(elements.map(el => el.getText()));
 
