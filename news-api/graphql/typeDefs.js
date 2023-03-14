@@ -17,6 +17,8 @@ type User {
 type Comment {
     body: String
     username: String
+    date: String
+    id: String
 }
 
 type News {
@@ -60,8 +62,10 @@ input DislikeInput {
 
 input CommentInput {
     action: Boolean
-    post: ID
-    comment: ID
+    postId: ID
+    commentId: ID
+    body: String
+    date: String
 }
 
 type Query {
@@ -76,6 +80,6 @@ type Mutation {
     loginUser(loginInput: LoginInput): User
     updateLike(likeInput: LikeInput): Boolean
     updateDislike(dislikeInput: DislikeInput): Boolean
-    updateComment(commentInput: CommentInput): ID
+    updateComment(commentInput: CommentInput): String
 }
 `

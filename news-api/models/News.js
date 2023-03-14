@@ -4,7 +4,7 @@ const userShema = new Schema({
     title: String,
     likes: Number,
     dislikes: Number,
-    comments: [{ body: String, username: String }],
+    comments: [{ body: String, date: String, user_id: { type: 'ObjectId', ref: 'User' } }],
     category: String,
     time: String
 });

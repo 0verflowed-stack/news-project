@@ -5,9 +5,9 @@ const userShema = new Schema({
     email: { type: String, unique: true },
     password: { type: String },
     token: { type: String },
-    likes: [{news_id: {  type: 'ObjectId', ref: 'News' }}],
-    dislikes: [{news_id: {  type: 'ObjectId', ref: 'News' }}],
-    comments: [[{ news_id: {  type: 'ObjectId', ref: 'News' }, body: String }]]
+    likes: [{news_id: { type: 'ObjectId', ref: 'News' }}],
+    dislikes: [{news_id: { type: 'ObjectId', ref: 'News' }}],
+    comments: [[{ news_id: { type: 'ObjectId', ref: 'News' }, comment_id: { type: 'ObjectId' } }]]
 });
 
 module.exports = model('User', userShema);

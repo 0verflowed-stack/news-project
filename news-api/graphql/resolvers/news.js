@@ -82,17 +82,42 @@ module.exports = {
 
             return true;
         },
-        async updateComment(_, { commentInput: { action, post, comment } }) {
-            
-
-            return {
+        async updateComment(_, { commentInput: { action, postId, commentId, body, date } }, { token }) {
+            const user = await auth(token);
+            const id = new Types.ObjectId();
+            if (action) {
+                const news = await News.findOne({ _id: new Types.ObjectId(postId) });
                 
-            };
+                news.comments.push({ _id: id, body, user_id: user.user_id, date });
+                await news.save();
+
+                const userDb = await User.findOne({ _id: new Types.ObjectId(user.user_id) });
+                userDb.comments.push({ news_id: postId, comment_id: id });
+                await userDb.save();
+            } else {
+                const news = await News.findOne({ _id: new Types.ObjectId(postId) });
+                const lenPrev = news.comments.length;
+                news.comments = news.comments.filter(x => x._id.toString() !== commentId || x.user_id.toString() !== user.user_id);
+                const lenAfter = news.comments.length;
+                await news.save();
+
+                if (lenPrev === lenAfter) {
+                    return '';
+                }
+
+                const userDb = await User.findOne({ _id: new Types.ObjectId(user.user_id) });
+                userDb.comments = userDb.comments.filter(x => x.news_id.toString() !== postId || x.comment_id.toString() !== commentId);
+                await userDb.save();
+                return '';
+            }
+
+            return id.toString();
         }
     },
     Query: {
         news: async (_, __, { token }) => {
             const user = await auth(token);
+            const users = await User.find();
             const userDb = await User.findOne({ _id: new Types.ObjectId(user.user_id) });
 
             let news = await News.find();
@@ -105,6 +130,12 @@ module.exports = {
                 if (userDb.dislikes.map(x => x.news_id.toString()).includes(newsItem._id.toString())) {
                     newsItem.disliked = true;
                 }
+                newsItem.comments = newsItem.comments.map(x => {
+                    const { username } = users.filter(y => y._id.toString() === x.user_id.toString())[0];
+                    x.username = username;
+                    x._doc.id = x._id.toString();
+                    return x;
+                });
                 return newsItem;
             });
             return news;
