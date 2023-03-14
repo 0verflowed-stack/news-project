@@ -9,8 +9,10 @@ const GET_NEWS = gql`
         news {
             category
             comments {
+                id
                 username
                 body
+                date
             }
             dislikes
             disliked

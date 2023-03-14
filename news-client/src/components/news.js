@@ -48,18 +48,6 @@ const SET_DISLIKE = gql`
     }
 `;
 
-const SET_COMMENT = gql`
-    mutation Mutation(
-        $commentInput: CommentInput
-    ) {
-        updateComment(
-            commentInput: $commentInput
-        )
-    }
-`;
-
-
-
 const NewsItem = ({item}) => {
     const [likes, setLikes] = useState(item.likes);
     const [dislikes, setDislikes] = useState(item.dislikes);
@@ -70,8 +58,6 @@ const NewsItem = ({item}) => {
     const [setLikesMutation] = useMutation(SET_LIKE);
 
     const [setDislikesMutation] = useMutation(SET_DISLIKE);
-    
-    const [setCommentsMutation] = useMutation(SET_COMMENT);
 
     const handleLikeClick = () => {
         if (isLiked) {
@@ -108,12 +94,12 @@ const NewsItem = ({item}) => {
             <div>{item.title}</div>
             <div style={{display: "flex", justifyContent: "space-between"}}>
                 <div>
-                    <LikeBtn onClick={handleLikeClick}>{likes} <FontAwesomeIcon icon={isLiked ? faThumbsUpSolid : faThumbsUpRegular} /></LikeBtn>
-                    <LikeBtn onClick={handleDislikeClick}>{dislikes} <FontAwesomeIcon icon={isDisliked ? faThumbsDownSolid : faThumbsDownRegular} /></LikeBtn>
+                    <LikeBtn onClick={handleLikeClick}>{likes} <FontAwesomeIcon icon={isLiked ? faThumbsUpSolid : faThumbsUpRegular} style={{color: isLiked ? 'green' : 'black'}} /></LikeBtn>
+                    <LikeBtn onClick={handleDislikeClick}>{dislikes} <FontAwesomeIcon icon={isDisliked ? faThumbsDownSolid : faThumbsDownRegular} style={{color: isDisliked ? 'red' : 'black'}} /></LikeBtn>
                 </div>
                 <div>{new Date(Number(item.time)).toLocaleString()}</div>
             </div>
-            <Comments />
+            <Comments postId={item.id} comments={item.comments} />
         </StyledButton>
     );
 };

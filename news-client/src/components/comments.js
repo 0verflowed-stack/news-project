@@ -5,6 +5,8 @@ import { faCaretRight, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import Comment from './comment';
 import { AuthContext } from '../context/authContext';
 import { Alert } from '@mui/material';
+import { gql } from 'graphql-tag';
+import { useMutation } from '@apollo/react-hooks';
 
 const TextArea = styled.textarea`
     border-radius: 10px;
@@ -22,18 +24,36 @@ const Button = styled.button`
     }
 `;
 
-const Comments = () => {
-    const [comments, setComments] = useState([]);
+const SET_COMMENT = gql`
+    mutation Mutation(
+        $commentInput: CommentInput
+    ) {
+        updateComment(
+            commentInput: $commentInput
+        )
+    }
+`;
+
+const Comments = ({ postId, comments: commentsProp}) => {
+    const [comments, setComments] = useState(commentsProp);
     const [isCommentsOpen, setIsCommentsOpen] = useState(false);
     const textareaRef = useRef(null);
     const { user } = useContext(AuthContext);
     const [error, setError] = useState('');
+    const [setCommentMutation, { data, loading }] = useMutation(SET_COMMENT);
+    const [commentsQueue, setCommentsQueue] = useState([]);
+
+    if (data && commentsQueue.length) {
+        setComments(prev => [...prev, { ...commentsQueue.shift(), id: data.updateComment }]);
+    }
 
     const sendCommentHandle = () => {
         const text = textareaRef.current.value;
         if (text) {
             console.log({ body: text, email: user.email, username: user.username});
-            setComments(prev => [...prev, { body: text, email: user.email, username: user.username}]);
+            setCommentMutation({ variables: { commentInput: { action: true, postId, commentId: null, body: text, date: Date.now().toString() }} });
+            // setComments(prev => [...prev, { body: text, email: user.email, username: user.username}]);
+            setCommentsQueue(prev => [ ...prev, { body: text, email: user.email, username: user.username, date: Date.now().toString()}]);
             setError('');
             textareaRef.current.value = '';
         } else {
@@ -43,6 +63,18 @@ const Comments = () => {
 
     const commentsToggleHandle = () => {
         setIsCommentsOpen(prev => !prev);
+    };
+
+    const deleteComment = (commentToDeleteId) => {
+        console.log('commentToDelete', commentToDeleteId);
+        setCommentMutation({ variables: { commentInput: { action: false, postId, commentId: commentToDeleteId }} });
+        setComments(prev => {
+            console.log('Prev: ',prev);
+            console.log(prev.indexOf(prev.find(x => x.id === commentToDeleteId)));
+            prev = prev.filter(x => x.id !== commentToDeleteId);
+            console.log(prev);
+            return prev;
+        });
     };
 
     return (
@@ -61,7 +93,7 @@ const Comments = () => {
             {isCommentsOpen ? (
                 <>
                     {
-                        comments.map((comment, idx) => <Comment key={idx} comment={comment} />)
+                        comments.map((comment, idx) => <Comment key={idx} comment={comment} username={user.username} deleteComment={deleteComment} />)
                     }
                 </>
             ) : null}
