@@ -20,7 +20,6 @@ async function run(texts) {
         likes: 0,
         dislikes: 0,
         comments: [],
-        caterory: "",
         time: Date.now().toString()
     }));
 
