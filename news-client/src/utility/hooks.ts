@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-export const useForm = (callback, initialState = {}) => {
+export const useForm = (callback: () => void, initialState: object = {}) => {
     const [values, setValues] = useState(initialState);
 
-    const onChange = (e) => {
+    const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setValues({
             ...values,
             [e.target.name]: e.target.value
@@ -11,7 +11,7 @@ export const useForm = (callback, initialState = {}) => {
         console.log(values);
     };
 
-    const onSubmit = (e) => {
+    const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         callback();
     };

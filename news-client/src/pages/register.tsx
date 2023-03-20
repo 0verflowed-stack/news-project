@@ -7,13 +7,15 @@ import { TextField, Button, Container, Stack, Alert } from '@mui/material';
 
 import { gql } from 'graphql-tag';
 import { useNavigate } from 'react-router-dom';
+import IAuthContext from '../interfaces/authContext';
+import { GraphQLErrors } from '@apollo/client/errors';
 
-const LOGIN_USER = gql`
+const REGISTER_USER = gql`
     mutation Mutation(
-        $loginInput: LoginInput
+        $registerInput: RegisterInput
     ) {
-        loginUser(
-            loginInput: $loginInput
+        registerUser(
+            registerInput: $registerInput
         ) {
             email
             username
@@ -22,23 +24,25 @@ const LOGIN_USER = gql`
     }
 `;
 
-const Login = () => {
-    const context = useContext(AuthContext);
+const Register = () : JSX.Element => {
+    const context = useContext<IAuthContext>(AuthContext);
     let navigate = useNavigate();
-    const [errors, setErrors] = useState([]);
+    const [errors, setErrors] = useState<GraphQLErrors>([]);
 
-    const loginUserCallback = () => {
+    const registerUserCallback = () => {
         console.log('Callback');
-        loginUser();
+        registerUser();
     };
     
-    const { onChange, onSubmit, values } = useForm(loginUserCallback, {
+    const { onChange, onSubmit, values } = useForm(registerUserCallback, {
+        username: '',
         email: '',
-        password: ''
+        password: '',
+        confirmPassword: ''
     });
 
-    const [loginUser, { loading }] = useMutation(LOGIN_USER, {
-        update(proxy, { data: { loginUser: userData } }) {
+    const [registerUser] = useMutation(REGISTER_USER, {
+        update(_, { data: { registerUser: userData } }) {
             context.login(userData);
             navigate('/');
         },
@@ -46,15 +50,20 @@ const Login = () => {
             setErrors(graphQLErrors);
         },
         variables: {
-            loginInput: values
+            registerInput: values
         }
     });
 
     return (
-        <Container spacing={2} maxWidth="sm">
-            <h3>Login</h3>
-            <p>This is th login page, login below!</p>
+        <Container maxWidth="sm">
+            <h3>Register</h3>
+            <p>This is th register page, register below to create an account!</p>
             <Stack spacing={2} paddingBottom={2}>
+                <TextField
+                    label="Username"
+                    name="username"
+                    onChange={onChange}
+                />
                 <TextField
                     label="Email"
                     name="email"
@@ -65,6 +74,11 @@ const Login = () => {
                     name="password"
                     onChange={onChange}
                 />
+                <TextField
+                    label="Confirm password"
+                    name="confirmPassword"
+                    onChange={onChange}
+                />
             </Stack>
             {errors.map((error, idx) => {
                 return (
@@ -73,9 +87,9 @@ const Login = () => {
                     </Alert>
                 );
             })}
-            <Button variant="contained" onClick={onSubmit}>Login</Button>
+            <Button variant="contained" onClick={onSubmit}>Register</Button>
         </Container>
     );
 };
 
-export default Login;
+export default Register;

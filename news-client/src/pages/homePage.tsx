@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
 import NewsFeed from '../components/newsFeed';
 import { AuthContext } from '../context/authContext';
+import IAuthContext from '../interfaces/authContext';
 
-const HomePage = () => {
-    const { user, logout } = useContext(AuthContext);
+const HomePage = () : JSX.Element => {
+    const { user } = useContext<IAuthContext>(AuthContext);
     
     return (
        <>

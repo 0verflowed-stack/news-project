@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import IComment from '../interfaces/comment';
 
 const WrapperComment = styled.div`
     display: flex;
@@ -18,7 +19,13 @@ const CommentBody = styled.div`
     font-size: 20px;
 `;
 
-const Comment = ({comment, username, deleteComment}) => {
+interface ICommentProps {
+    comment: IComment
+    username: string
+    deleteComment: (id: string) => void
+};
+
+const Comment = ({ comment, username, deleteComment }: ICommentProps): JSX.Element => {
     const deleteCommentHandle = () => {
         deleteComment(comment.id);
     };

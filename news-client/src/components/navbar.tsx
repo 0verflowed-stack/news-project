@@ -2,16 +2,17 @@ import { useContext } from 'react';
 import { AppBar, Box, Toolbar, Typography, Button } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/authContext';
+import IAuthContext from '../interfaces/authContext';
 
-const Navbar = () => {
+const Navbar = () : JSX.Element => {
     const navigate = useNavigate();
-    const { user, logout } = useContext(AuthContext);
+    const { user, logout } = useContext<IAuthContext>(AuthContext);
 
     const onLogout = () => {
         logout();
         navigate('/');
     };
-    console.log(user);
+
     return (
         <Box sx={{ flexGrow: 1}}>
             <AppBar position="static">
@@ -30,7 +31,6 @@ const Navbar = () => {
                                 </>
                             )
                         }
-                        
                     </Box>
                 </Toolbar>
             </AppBar>

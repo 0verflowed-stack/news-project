@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp as faThumbsUpSolid, faThumbsDown as faThumbsDownSolid } from '@fortawesome/free-solid-svg-icons';
@@ -6,6 +6,8 @@ import { faThumbsUp as faThumbsUpRegular, faThumbsDown as faThumbsDownRegular } 
 import Comments from './comments';
 import { gql } from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
+import INews from '../interfaces/news';
+import Category from './category';
 
 const StyledButton = styled.div`
   background-color: white;
@@ -48,7 +50,13 @@ const SET_DISLIKE = gql`
     }
 `;
 
-const NewsItem = ({item}) => {
+interface INewsItemProps {
+    item: INews,
+    categories: string[],
+    categoryChangeHandler: (id: string, newCategory: string) => void
+}
+
+const NewsItem = ({ item, categories, categoryChangeHandler } : INewsItemProps, ref: React.ForwardedRef<HTMLDivElement>) : JSX.Element => {
     const [likes, setLikes] = useState(item.likes);
     const [dislikes, setDislikes] = useState(item.dislikes);
 
@@ -87,21 +95,22 @@ const NewsItem = ({item}) => {
             setDislikesMutation({ variables: { dislikeInput: { action: true, post: item.id }} });
         }
         setIsDisliked(prev => !prev);
-    };
+    }; 
 
     return (
-        <StyledButton>
+        <StyledButton ref={ref}>
             <div>{item.title}</div>
             <div style={{display: "flex", justifyContent: "space-between"}}>
-                <div>
+                <div style={{ display: "flex" }}>
                     <LikeBtn onClick={handleLikeClick}>{likes} <FontAwesomeIcon icon={isLiked ? faThumbsUpSolid : faThumbsUpRegular} style={{color: isLiked ? 'green' : 'black'}} /></LikeBtn>
                     <LikeBtn onClick={handleDislikeClick}>{dislikes} <FontAwesomeIcon icon={isDisliked ? faThumbsDownSolid : faThumbsDownRegular} style={{color: isDisliked ? 'red' : 'black'}} /></LikeBtn>
+                    <Category postId={item.id} category={item.category} categories={categories} categoryChangeHandler={categoryChangeHandler} />
                 </div>
-                <div>{new Date(Number(item.time)).toLocaleString()}</div>
+                <div style={{ fontSize: "18px" }}>{new Date(Number(item.time)).toLocaleString()}</div>
             </div>
             <Comments postId={item.id} comments={item.comments} />
         </StyledButton>
     );
 };
 
-export default NewsItem;
+export default forwardRef(NewsItem);

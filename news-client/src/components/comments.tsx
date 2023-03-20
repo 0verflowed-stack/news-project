@@ -1,4 +1,4 @@
-import { useState, useRef, useContext } from 'react';
+import { useState, useContext } from 'react';
 import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretRight, faCaretDown } from '@fortawesome/free-solid-svg-icons';
@@ -7,6 +7,8 @@ import { AuthContext } from '../context/authContext';
 import { Alert } from '@mui/material';
 import { gql } from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
+import IComment from '../interfaces/comment';
+import IAuthContext from '../interfaces/authContext';
 
 const TextArea = styled.textarea`
     border-radius: 10px;
@@ -34,28 +36,36 @@ const SET_COMMENT = gql`
     }
 `;
 
-const Comments = ({ postId, comments: commentsProp}) => {
-    const [comments, setComments] = useState(commentsProp);
+interface ICommentsProps {
+    postId: string
+    comments: IComment[]
+}
+
+const Comments = ({ postId, comments: commentsProp }: ICommentsProps): JSX.Element | null => {
+    const [comments, setComments] = useState<IComment[]>(commentsProp);
     const [isCommentsOpen, setIsCommentsOpen] = useState(false);
-    const textareaRef = useRef(null);
-    const { user } = useContext(AuthContext);
+    const [textAreaValue, setTextAreaValue] = useState<string>('');
+    const { user } = useContext<IAuthContext>(AuthContext);
     const [error, setError] = useState('');
-    const [setCommentMutation, { data, loading }] = useMutation(SET_COMMENT);
-    const [commentsQueue, setCommentsQueue] = useState([]);
+    const [setCommentMutation, { data }] = useMutation<{ updateComment: string }>(SET_COMMENT);
+    const [commentsQueue, setCommentsQueue] = useState<IComment[]>([]);
+    
+    if (!user) {
+        return null;
+    }
 
     if (data && commentsQueue.length) {
-        setComments(prev => [...prev, { ...commentsQueue.shift(), id: data.updateComment }]);
+        setComments(prev => [...prev, { ...commentsQueue.shift()!, id: data.updateComment }]);
     }
 
     const sendCommentHandle = () => {
-        const text = textareaRef.current.value;
+        const text = textAreaValue;
         if (text) {
-            console.log({ body: text, email: user.email, username: user.username});
+            console.log({ body: text, username: user.username});
             setCommentMutation({ variables: { commentInput: { action: true, postId, commentId: null, body: text, date: Date.now().toString() }} });
-            // setComments(prev => [...prev, { body: text, email: user.email, username: user.username}]);
-            setCommentsQueue(prev => [ ...prev, { body: text, email: user.email, username: user.username, date: Date.now().toString()}]);
+            setCommentsQueue(prev => [ ...prev, { id: '', body: text, username: user.username, date: Date.now().toString()}]);
             setError('');
-            textareaRef.current.value = '';
+            setTextAreaValue('');
         } else {
             setError('Cannot send comment. Comment is empty!');
         }
@@ -65,28 +75,38 @@ const Comments = ({ postId, comments: commentsProp}) => {
         setIsCommentsOpen(prev => !prev);
     };
 
-    const deleteComment = (commentToDeleteId) => {
-        console.log('commentToDelete', commentToDeleteId);
+    const deleteComment = (commentToDeleteId: string) => {
         setCommentMutation({ variables: { commentInput: { action: false, postId, commentId: commentToDeleteId }} });
         setComments(prev => {
-            console.log('Prev: ',prev);
-            console.log(prev.indexOf(prev.find(x => x.id === commentToDeleteId)));
             prev = prev.filter(x => x.id !== commentToDeleteId);
-            console.log(prev);
             return prev;
         });
     };
 
+    const textAreaValueChangeHandler = (e: any) => {
+        setTextAreaValue(e.target.value);
+    };
+
     return (
         <div style={{display: "flex", flexDirection: "column", alignItems: "start"}}>
-            <TextArea ref={textareaRef} id="story" name="story" rows="5" cols="33" placeholder="Write what you this about this news"></TextArea>
+            <TextArea
+                value={textAreaValue}
+                onInput={textAreaValueChangeHandler}
+                id="story"
+                name="story"
+                rows={5}
+                cols={33}
+                placeholder="Write what you this about this news"
+            />
             <Button style={{alignSelf: "end", backgroundColor: "#1976d2", color: "white"}} onClick={sendCommentHandle}>Send</Button>
-            {error ? (
-            <Alert severity="error">
-                {error}
-            </Alert>
-            ): null}
-            <Button onClick={commentsToggleHandle}>
+            {
+                error ? (
+                    <Alert severity="error">
+                        {error}
+                    </Alert>
+                ): null
+            }
+            <Button onClick={commentsToggleHandle}> 
                 <FontAwesomeIcon icon={isCommentsOpen ? faCaretDown : faCaretRight} style={{marginRight: "10px"}} />
                 {`Comments (${comments.length})`}
             </Button>
