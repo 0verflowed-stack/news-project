@@ -20,27 +20,6 @@ AppRegistry.registerComponent('X', () => App);
 
 
 export default function App() {
-  const context = useContext<IAuthContext>(AuthContext);
-      
-
-    useEffect(() => {
-      const setUser = async () => {
-        const token : string | null | undefined = await getData('token');
-        console.log('awaited token', token);
-    
-        if (token) {
-            const decodedToken : IToken = jwtDecode(token);
-            console.log('123context', context, { username: decodedToken.username, email: decodedToken.email });
-    
-            if (decodedToken.exp * 1000 < Date.now()) {
-                await storeData('token', undefined);
-            } else {
-                context.login({ username: decodedToken.username, email: decodedToken.email, token, password: '' });
-            }
-        }
-      };
-      setUser();
-    }, []);
 
   return (
     <AuthProvider>
