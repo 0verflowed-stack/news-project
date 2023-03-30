@@ -4,10 +4,10 @@
     "slug": "news-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/newspaper.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/newspaper.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,12 +19,18 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/newspaper.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.overflowedstack.newsapp"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/newspaper.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "378475c8-e3f1-4774-a28a-bc4b0d68dbad"
+      }
     }
   }
 }
