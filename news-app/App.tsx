@@ -15,28 +15,22 @@ import { getData, storeData } from './src/storage';
 import jwtDecode from 'jwt-decode';
 import IToken from './src/interfaces/token';
 import AuthConsumer from './src/components/authConsumer';
+import store from './src/store';
+import { Provider } from 'react-redux';
 
 AppRegistry.registerComponent('X', () => App);
 
 
 export default function App() {
-
   return (
-    <AuthProvider>
-      <AuthConsumer>
-        <ApolloProvider client={client}>
-          <Navigator />
-        </ApolloProvider>
-      </AuthConsumer>
-  </AuthProvider>
+    <Provider store={store}>
+      <AuthProvider>
+        <AuthConsumer>
+          <ApolloProvider client={client}>
+            <Navigator />
+          </ApolloProvider>
+        </AuthConsumer>
+      </AuthProvider>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

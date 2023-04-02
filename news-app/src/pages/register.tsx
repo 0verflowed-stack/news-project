@@ -31,7 +31,6 @@ const Register = ({ navigation } : IRegisterProps) : JSX.Element => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    console.log('Register screen');
     const registerUserCallback = () => {
         registerUser();
     };
@@ -97,7 +96,9 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         alignSelf: 'center',
-        marginTop: '60%'
+        marginTop: '60%',
+        marginLeft: '20$',
+        marginRight: '20%'
     },
     input: {
         borderRadius: 10

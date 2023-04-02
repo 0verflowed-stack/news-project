@@ -30,20 +30,14 @@ const Login = ({ navigation } : ILogicProps) : JSX.Element => {
     const [errors, setErrors] = useState<GraphQLErrors>([]);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    console.log('contextLogin', context);
-
-    console.log('Login screen');
 
     const loginUserCallback = (e: GestureResponderEvent) => {
         e.preventDefault();
-        console.log('Callback');
         loginUser();
-        console.log('context', context);
     };
 
     const [loginUser] = useMutation(LOGIN_USER, {
         update(_, { data: { loginUser: userData } }) {
-            console.log('userData', userData)
             context.login(userData);
             navigation.navigate('Home');
         },

@@ -2,7 +2,7 @@ import styled from "styled-components/native";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import IComment from '../interfaces/comment';
-import { View, StyleSheet, Text, Button, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 
 const WrapperComment = styled.View`
     display: flex;

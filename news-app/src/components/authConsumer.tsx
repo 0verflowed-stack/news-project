@@ -21,6 +21,7 @@ export default function AuthConsumer({ children } : IAuthConsumerProps) {
     
             if (decodedToken.exp * 1000 < Date.now()) {
                 await storeData('token', undefined);
+                context.login(null);
             } else {
                 context.login({ username: decodedToken.username, email: decodedToken.email, token, password: '' });
             }

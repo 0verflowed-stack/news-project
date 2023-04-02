@@ -1,9 +1,5 @@
-import { memo, useState } from 'react';
-import { gql } from 'graphql-tag';
-import { useMutation } from '@apollo/react-hooks';
-import { View, StyleSheet, Text, Button } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Dropdown } from 'react-native-element-dropdown';
+import { memo } from 'react';
+import { View } from 'react-native';
 import DropdownComponent from './dropdown';
 
 interface ICategoryProps {

@@ -1,22 +1,17 @@
-import React, { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import NewsFeed from '../components/newsFeed';
 import { AuthContext } from '../context/authContext';
 import IAuthContext from '../interfaces/authContext';
-import { View, StyleSheet, Text, Button, Pressable } from 'react-native';
+import { View, StyleSheet, Text, Pressable } from 'react-native';
 
 interface IHomePageProps {
     navigation: any
 }
 
 const HomePage = ({ navigation } : IHomePageProps) : JSX.Element => {
-    console.log('HomePage screen');
-    console.debug("text");
-    console.log('use11111r', 11111);
     const context = useContext<IAuthContext>(AuthContext);
-    console.log('user', context, ' - ', context?.user);
 
     const loginHandler = () => {
-        console.log('34user', context?.user);
         navigation.navigate('Login');
     };
 
@@ -29,7 +24,7 @@ const HomePage = ({ navigation } : IHomePageProps) : JSX.Element => {
         {context?.user ? (
             <>
                 <Text>{context?.user?.email} is logined</Text>
-                <NewsFeed/>
+                <NewsFeed navigation={navigation}/>
             </>
         ) : (
             <View style={styles.container}>

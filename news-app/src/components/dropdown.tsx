@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { gql } from 'graphql-tag';
@@ -34,7 +34,6 @@ const DropdownComponent = ({ options, categoryProp, postId, categoryChangeHandle
 
     const onChangeHandle = (value: string) => {
         const newValue = value;
-        console.log(newValue);
         setCategoryMutation({ variables: { categoryInput: { category: newValue, postId }}});
         categoryChangeHandler(postId, newValue);
     };

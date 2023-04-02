@@ -8,7 +8,9 @@ import { gql } from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import IComment from '../interfaces/comment';
 import IAuthContext from '../interfaces/authContext';
-import { View, StyleSheet, Text, Button, Pressable } from 'react-native';
+import { View, StyleSheet, Text, Pressable } from 'react-native';
+import { useAppDispatch } from '../hooks/redux';
+import { addComment, removeComment } from '../features/news/newsSlice';
 
 const TextArea = styled.TextInput`
     border-radius: 10px;
@@ -32,27 +34,28 @@ interface ICommentsProps {
     comments: IComment[]
 }
 
-const Comments = ({ postId, comments: commentsProp }: ICommentsProps): JSX.Element | null => {
-    const [comments, setComments] = useState<IComment[]>(commentsProp);
+const Comments = ({ postId, comments }: ICommentsProps): JSX.Element | null => {
     const [isCommentsOpen, setIsCommentsOpen] = useState(false);
     const [textAreaValue, setTextAreaValue] = useState<string>('');
     const { user } = useContext<IAuthContext>(AuthContext);
     const [error, setError] = useState('');
     const [setCommentMutation, { data }] = useMutation<{ updateComment: string }>(SET_COMMENT);
     const [commentsQueue, setCommentsQueue] = useState<IComment[]>([]);
+
+    const dispatch = useAppDispatch();
     
     if (!user) {
         return null;
     }
 
-    if (data && commentsQueue.length) {
-        setComments(prev => [...prev, { ...commentsQueue.shift()!, id: data.updateComment }]);
+    if (data && commentsQueue.length > 0) {
+        const newComment = { ...commentsQueue.shift()!, id: data.updateComment };
+        dispatch(addComment({ postId, comment: newComment }));
     }
 
     const sendCommentHandle = () => {
         const text = textAreaValue;
         if (text) {
-            console.log({ body: text, username: user.username});
             setCommentMutation({ variables: { commentInput: { action: true, postId, commentId: null, body: text, date: Date.now().toString() }} });
             setCommentsQueue(prev => [ ...prev, { id: '', body: text, username: user.username, date: Date.now().toString()}]);
             setError('');
@@ -68,10 +71,7 @@ const Comments = ({ postId, comments: commentsProp }: ICommentsProps): JSX.Eleme
 
     const deleteComment = (commentToDeleteId: string) => {
         setCommentMutation({ variables: { commentInput: { action: false, postId, commentId: commentToDeleteId }} });
-        setComments(prev => {
-            prev = prev.filter(x => x.id !== commentToDeleteId);
-            return prev;
-        });
+        dispatch(removeComment({ postId, commentId: commentToDeleteId }));
     };
 
     const textAreaValueChangeHandler = (value: string) => {
