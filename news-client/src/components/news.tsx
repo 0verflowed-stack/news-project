@@ -8,6 +8,8 @@ import { gql } from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import INews from '../interfaces/news';
 import Category from './category';
+import { decrementLikes, incrementLikes, decrementDislikes, incrementDislikes } from '../features/news/newsSlice';
+import { useAppDispatch } from '../hooks/redux';
 
 const StyledButton = styled.div`
   background-color: white;
@@ -67,14 +69,19 @@ const NewsItem = ({ item, categories, categoryChangeHandler } : INewsItemProps, 
 
     const [setDislikesMutation] = useMutation(SET_DISLIKE);
 
+    const dispatch = useAppDispatch();
+
     const handleLikeClick = () => {
         if (isLiked) {
             setLikes(prev => prev - 1);
+            dispatch(decrementLikes(item.id));
             setLikesMutation({ variables: { likeInput: { action: false, post: item.id }} });
         } else {
             setLikes(prev => prev + 1);
+            dispatch(incrementLikes(item.id));
             if (isDisliked) {
                 setDislikes(prev => prev - 1);
+                dispatch(decrementDislikes(item.id));
                 setIsDisliked(prev => !prev)
             }
             setLikesMutation({ variables: { likeInput: { action: true, post: item.id }} });
@@ -85,17 +92,20 @@ const NewsItem = ({ item, categories, categoryChangeHandler } : INewsItemProps, 
     const handleDislikeClick = () => {
         if (isDisliked) {
             setDislikes(prev => prev - 1);
+            dispatch(decrementDislikes(item.id));
             setDislikesMutation({ variables: { dislikeInput: { action: false, post: item.id }} });
         } else {
             setDislikes(prev => prev + 1);
+            dispatch(incrementDislikes(item.id));
             if (isLiked) {
                 setLikes(prev => prev - 1);
+                dispatch(decrementLikes(item.id));
                 setIsLiked(prev => !prev)
             }
             setDislikesMutation({ variables: { dislikeInput: { action: true, post: item.id }} });
         }
         setIsDisliked(prev => !prev);
-    }; 
+    };
 
     return (
         <StyledButton ref={ref}>

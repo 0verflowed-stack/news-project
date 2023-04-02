@@ -7,20 +7,24 @@ import client from './apolloClient';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/authContext';
+import store from './store';
+import { Provider } from 'react-redux';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <AuthProvider>
-     <ApolloProvider client={client}>
-      <BrowserRouter>
-        {/* <React.StrictMode> */}
-          <App />
-        {/* </React.StrictMode> */}
-       </BrowserRouter>
-     </ApolloProvider>
-  </AuthProvider>
+  <Provider store={store}>
+    <AuthProvider>
+      <ApolloProvider client={client}>
+        <BrowserRouter>
+          {/* <React.StrictMode> */}
+            <App />
+          {/* </React.StrictMode> */}
+        </BrowserRouter>
+      </ApolloProvider>
+    </AuthProvider>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

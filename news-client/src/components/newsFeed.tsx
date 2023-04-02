@@ -6,6 +6,8 @@ import { Alert } from '@mui/material';
 import { GraphQLErrors } from '@apollo/client/errors';
 import INews from '../interfaces/news';
 import styled from "styled-components";
+import { selectNews, receiveNews, changeCategory } from '../features/news/newsSlice';
+import { useAppSelector, useAppDispatch } from '../hooks/redux';
 
 const CategoryButton = styled.button`
     margin: 5px;
@@ -49,14 +51,17 @@ const READ_LATER = 'Read later';
 
 const NewsFeed = () => {
     const [errors, setErrors] = useState<GraphQLErrors>([]);
-    const [news, setNews] = useState<INews[]>([]);
     const [categories, setCategories] = useState([]);
     const [currentCategory, setCurrentCategory] = useState('');
     const itemsRef = useRef<Array<HTMLDivElement | null>>([]);
 
+    const { news } : { news: { [key: string]: INews } } = useAppSelector(selectNews);
+
+    const dispatch = useAppDispatch();
+
     useQuery(GET_NEWS, {
         onCompleted(data) {
-            setNews(data.news);
+            dispatch(receiveNews(data.news));
         },
         onError({ graphQLErrors }) {
             setErrors(graphQLErrors);
@@ -72,7 +77,7 @@ const NewsFeed = () => {
         }
     });
     
-    const filteredNews = news.filter(x => {
+    const filteredNews = Object.values(news).filter(x => {
         if (currentCategory === '') {
             return true;
         }
@@ -81,7 +86,7 @@ const NewsFeed = () => {
 
     let notificationNewsItem : INews | undefined;
 
-    const readLaterArticle = news.find(x => x.category === READ_LATER);
+    const readLaterArticle = Object.values(news).find(x => x.category === READ_LATER);
 
     let notificationTitle = '';
 
@@ -122,14 +127,7 @@ const NewsFeed = () => {
     }, [notificationNewsItem, notificationTitle]);
 
     const categoryChangeHandler = (id: string, newCategory: string) => {
-        setNews(prev => {
-            const idx = prev.findIndex(x => x.id === id);
-            const tempArray = [...prev];
-            const tempNews = { ...tempArray[idx] };
-            tempNews.category = newCategory;
-            tempArray[idx] = tempNews;
-            return tempArray;
-        });
+        dispatch(changeCategory({ id, category: newCategory }));
     };
 
     return (
