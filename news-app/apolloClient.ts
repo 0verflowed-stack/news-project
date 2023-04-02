@@ -1,6 +1,5 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from '@apollo/client/link/context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getData } from "./src/storage";
 
 const LOCAL_IP = '192.168.50.123';
