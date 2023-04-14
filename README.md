@@ -1,19 +1,20 @@
 # news-project
 Run in all projects
-bash```
+```bash
 npm install
 ```
-To run project got o publish folder and run commands
-bash```
+To run project go to publish folder and run commands
+
+```bash
 docker compose build
 docker compose up
 ```
 Run in foldedr news-client to bootstrap FE
-bash```
+```bash
 npm run start
 ```
 
 Run in folder news-app to run application
-bash```
+```bash
 npm run android
 ```
