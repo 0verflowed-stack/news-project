@@ -17,7 +17,22 @@ const getNews = async () => {
   try {
     await driver.get(newsUrl);
 
+    async function hasScrollHeightChanged() {
+      await driver.sleep(500);
+      const previousScrollHeight = await driver.executeScript('return document.body.scrollHeight;');
+      await driver.executeScript('window.scrollBy(0, document.body.scrollHeight);');
+      const currentScrollHeight = await driver.executeScript('return document.body.scrollHeight;');
+
+      if (currentScrollHeight !== previousScrollHeight) {
+        await hasScrollHeightChanged();
+      }
+    }
+
     await driver.wait(until.elementLocated(By.css("a")), $locateElemTimeout);
+
+    await hasScrollHeightChanged();
+
+    await driver.executeScript('window.scrollBy(0, 500);')
     const elements = await driver.findElements(By.css("a.im-tl_a"));
   
     const news = await Promise.all(elements.map(el => el.getText()));

@@ -23,7 +23,9 @@ async function run(texts) {
         time: Date.now().toString()
     }));
 
-    await Promise.allSettled(data.map(item => news.insertOne(item)));
+    try {
+        await Promise.allSettled(data.map(item => news.insertOne(item)));
+    } catch {}
 }
 
 await subscriber.subscribe('article', (message) => {

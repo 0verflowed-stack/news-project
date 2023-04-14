@@ -200,17 +200,6 @@ const NewsFeed = ({ navigation } : INewsFeedProps) : JSX.Element => {
                 
                 schedulePushNotification(notificationTitle, notificationNewsItem.title);
             }
-            //         notification.addEventListener('click', () => {
-            //             if (readLaterArticle) {
-            //                 setCurrentCategory(READ_LATER);
-            //             } else {
-            //                 setCurrentCategory('');
-            //             }
-            //             // @ts-ignore
-            //             itemsRef.current[notificationNewsItem.id]?.scrollIntoView();
-            //             // @ts-ignore
-            //             itemsRef.current[notificationNewsItem.id]?.classList.add('bgGray');
-            //         });
         }, 20 * 60 * 1000);
 
         return () => {
