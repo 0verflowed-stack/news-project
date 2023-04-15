@@ -13,7 +13,7 @@ await subscriber.connect();
 async function run(texts) {
     const database = mongoClient.db('news-consumer');
     const news = database.collection('news');
-    news.createIndex({title: 1}, {unique: true});
+    await news.createIndex({title: 1}, {unique: true});
 
     const data = texts.map(text => ({
         title: text,
